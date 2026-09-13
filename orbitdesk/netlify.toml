@@ -1,0 +1,7 @@
+[build]
+  base = "orbitdesk"
+  publish = "."
+  command = ""
+
+[build.processing]
+  skip_processing = true

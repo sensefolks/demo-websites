@@ -1,0 +1,14 @@
+{
+  "name": "sensefolks-demo-websites",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Three independent static websites with contextual survey placeholders.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "sync": "node scripts/sync-shared.mjs",
+    "check": "node scripts/sync-shared.mjs --check && node scripts/check-sites.mjs",
+    "test": "playwright test",
+    "preview": "node scripts/preview.mjs"
+  },
+  "devDependencies": { "@playwright/test": "1.63.0" }
+}

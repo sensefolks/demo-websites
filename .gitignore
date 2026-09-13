@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+.netlify/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+artifacts/
+*.log
+*.pem
+*.key
+*.p12
+*.pfx

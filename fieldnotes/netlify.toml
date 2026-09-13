@@ -1,0 +1,7 @@
+[build]
+  base = "fieldnotes"
+  publish = "."
+  command = ""
+
+[build.processing]
+  skip_processing = true
