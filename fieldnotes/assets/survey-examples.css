@@ -1,14 +1,14 @@
 /* Shared explorer layout; each site supplies its own fonts and identity. */
 body[data-site="orbitdesk"] {
-  --example-accent: #426331;
-  --example-tint: #eef4e3;
-  --example-surface: #fff;
+  --example-accent: var(--demo-accent, #426331);
+  --example-tint: var(--demo-tint, #eef4e3);
+  --example-surface: var(--demo-surface, #fff);
   --example-radius: 14px;
 }
 body[data-site="moss-and-mug"] {
-  --example-accent: #7d4b35;
-  --example-tint: #f0e9df;
-  --example-surface: #fffcf6;
+  --example-accent: var(--demo-accent, #7d4b35);
+  --example-tint: var(--demo-tint, #f0e9df);
+  --example-surface: var(--demo-surface, #fffcf6);
   --example-radius: 3px;
 }
 body[data-site="fieldnotes"] {
@@ -89,9 +89,9 @@ body[data-site="fieldnotes"] {
 }
 .example-type:hover { background: var(--example-tint); }
 .example-type[aria-pressed="true"] {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: #fff;
+  border-color: var(--demo-button-bg, var(--ink));
+  background: var(--demo-button-bg, var(--ink));
+  color: var(--demo-button-ink, #fff);
 }
 .example-grid {
   display: grid;
@@ -297,7 +297,7 @@ body[data-site="fieldnotes"] {
   overflow-y: auto;
   box-shadow: 0 24px 80px #15221b30;
 }
-.example-dialog::backdrop { background: #17231db3; backdrop-filter: blur(3px); }
+.example-dialog::backdrop { background: var(--demo-backdrop, #17231db3); backdrop-filter: blur(3px); }
 .example-dialog-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 23px; }
 .example-dialog-top h2 { margin: 0; font-size: 27px; line-height: 1.2; }
 .example-dialog-top button { flex: none; width: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); font-size: 25px; }
@@ -316,11 +316,11 @@ body[data-site="fieldnotes"] {
 .example-footer [data-demo-reset] { min-height: 44px; }
 .example-button {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 12px 18px; min-height: 44px; border: 1px solid var(--ink);
-  border-radius: var(--example-radius); background: var(--ink); color: #fff;
+  padding: 12px 18px; min-height: 44px; border: 1px solid var(--demo-button-bg, var(--ink));
+  border-radius: var(--example-radius); background: var(--demo-button-bg, var(--ink)); color: var(--demo-button-ink, #fff);
   font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1.5; cursor: pointer;
 }
-.example-button:hover { background: var(--example-accent); border-color: var(--example-accent); }
+.example-button:hover { background: var(--demo-button-hover, var(--example-accent)); border-color: var(--demo-button-hover, var(--example-accent)); }
 .example-link { text-decoration: underline; text-underline-offset: 4px; }
 .example-preview { padding-bottom: 24px; }
 .example-config label { margin-bottom: 0; }
