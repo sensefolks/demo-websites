@@ -119,7 +119,7 @@
     });
     updateCounts();
 
-    function completeTask(button, explicitScenario = false) {
+    function completeTask(button) {
       if (!button || button.disabled) return;
       const card = button.closest('.task-card');
       completed.add(card.dataset.task);
@@ -131,18 +131,12 @@
       const shouldOffer = !Demo.state.get('roadmap-offered', false);
       Demo.state.set('roadmap-offered', true);
       Demo.toast('Nicely done. One more good thing moved forward.');
-      if (explicitScenario) Demo.show('roadmap-dialog');
-      else if (shouldOffer) Demo.show('roadmap-dialog', { automatic: true });
+      if (shouldOffer) Demo.show('roadmap-dialog', { automatic: true });
     }
 
     board.addEventListener('click', (event) => {
       const button = event.target.closest('[data-complete]');
       if (button) completeTask(button);
-    });
-    document.getElementById('try-roadmap').addEventListener('click', () => {
-      const firstTask = board.querySelector('[data-complete]:not(:disabled)');
-      if (firstTask) completeTask(firstTask, true);
-      else Demo.show('roadmap-dialog');
     });
 
     function setView(view) {
@@ -253,6 +247,12 @@
       filterGuides();
     }
     if (params.get('scenario') === 'helpful') document.getElementById('help-start').open = true;
+    function openLinkedGuide() {
+      const guide = guides.find((item) => `#${item.id}` === location.hash);
+      if (guide) guide.open = true;
+    }
+    openLinkedGuide();
+    window.addEventListener('hashchange', openLinkedGuide);
   }
 
   if (page === 'account') {

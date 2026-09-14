@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import '../shared/survey-catalog.js';
+import '../shared/survey-placements.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const routes = {
@@ -20,12 +20,13 @@ function assert(condition, message) { if (!condition) throw new Error(message); 
 
 for (const [site, expectedRoutes] of Object.entries(routes)) {
   const directory = path.join(root, site);
-  const home = await readFile(path.join(directory, 'index.html'), 'utf8');
   for (const type of requiredTypes) {
-    const scenario = globalThis.SurveyCatalog.sites[site].scenarios[type];
-    assert(scenario && scenario.question && scenario.trigger, `${site}: missing ${type} scenario`);
-    assert(home.includes(`/survey-examples/?type=${type}`), `${site}: missing discoverable ${type} combinations`);
-    await stat(path.join(directory, scenario.path, 'index.html'));
+    const placement = globalThis.SurveyPlacements[site][type];
+    assert(placement?.path && placement.anchor && placement.key, `${site}: missing ${type} placement`);
+    const page = await readFile(path.join(directory, placement.path, 'index.html'), 'utf8');
+    assert(page.includes(`id="${placement.anchor}"`), `${site}: missing native invitation ${placement.anchor}`);
+    assert(page.includes(`data-survey="${type}"`) && page.includes(`data-survey-key="${placement.key}"`), `${site}: missing native ${type} embed mount`);
+    assert(!placement.path.includes('survey-examples'), `${site}: surveys must belong to business pages`);
   }
   for (const route of expectedRoutes) await stat(path.join(directory, route, 'index.html'));
   const config = await readFile(path.join(directory, 'netlify.toml'), 'utf8');
@@ -49,7 +50,13 @@ for (const [site, expectedRoutes] of Object.entries(routes)) {
     assert(/fonts\.googleapis\.com/.test(content), `${file}: missing Google Fonts`);
     assert(!/\son\w+\s*=|javascript:|<script\b(?![^>]*\bsrc=)[^>]*>\s*\S/i.test(content), `${file}: inline scripts are not allowed`);
     assert(!/data-netlify|netlify-honeypot|type="password"|type="email"/i.test(content), `${file}: demo must not collect account or contact details`);
-    if (file.endsWith('/survey-examples/index.html')) assert(content.includes('id="example-controls"') && content.includes('/assets/survey-catalog.js') && content.includes('/assets/survey-examples.js'), `${site}: incomplete combinations explorer`);
+    if (file.endsWith('/survey-examples/index.html')) {
+      assert(content.includes('/assets/survey-placements.js') && !content.includes('example-controls'), `${site}: legacy URL must forward to its natural journey`);
+    } else {
+      assert(!/survey-examples[./]|example=1|Try this scenario|Try this combination|example-discovery/.test(content), `${file}: public pages must not expose the retired explorer`);
+    }
+    const keys = [...content.matchAll(/data-survey-key="([^"]+)"/g)].map((match) => match[1]);
+    assert(new Set(keys).size === keys.length, `${file}: duplicate survey keys`);
     for (const match of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
       const reference = match[1].replaceAll('&amp;', '&');
       if (/^(https?:|data:|mailto:|tel:)/.test(reference)) continue;

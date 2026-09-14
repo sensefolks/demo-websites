@@ -1,4 +1,4 @@
-/* Shared presentation helpers. No survey SDK, requests, or response collection. */
+/* Shared host behavior. Survey services are connected separately at the named mounts. */
 (() => {
   'use strict';
 
@@ -73,32 +73,26 @@
     elements.forEach((element) => {
       if (element.dataset.initialized) return;
       element.dataset.initialized = 'true';
-      const label = document.createElement('p');
-      label.className = 'survey-placeholder__label';
-      label.textContent = `Sensefolks / ${element.dataset.survey}`;
+      // Never replace an embed that has already been installed in this mount.
+      if (element.children.length) return;
+      element.dataset.surveyStatus = 'unconfigured';
       const title = document.createElement('h3');
       title.className = 'survey-placeholder__title';
-      title.textContent = element.dataset.question || `${element.dataset.survey} survey`;
-      const body = document.createElement('p');
-      body.className = 'survey-placeholder__body';
-      body.textContent = `A ${element.dataset.survey} survey will be embedded here.`;
-      element.replaceChildren(label, title, body);
-      if (element.dataset.trigger) {
-        const trigger = document.createElement('p');
-        trigger.className = 'survey-placeholder__trigger';
-        trigger.textContent = `Appears: ${element.dataset.trigger}`;
-        element.append(trigger);
-      }
-      const note = document.createElement('p');
-      note.className = 'survey-placeholder__note';
-      note.textContent = 'Placeholder only · No responses collected';
-      element.append(note);
-      const variants = document.createElement('a');
-      variants.className = 'survey-placeholder__variants';
-      variants.href = `/survey-examples/?type=${encodeURIComponent(element.dataset.survey)}`;
-      variants.textContent = `Explore ${element.dataset.survey} combinations →`;
-      element.append(variants);
+      title.textContent = element.dataset.question || 'A little room for your feedback';
+      const status = document.createElement('p');
+      status.className = 'survey-placeholder__body';
+      status.textContent = 'This feedback form is coming soon.';
+      element.append(title, status);
     });
+  }
+
+  const legacy = new URLSearchParams(location.search);
+  if (location.pathname === '/survey-examples/' || legacy.get('example') === '1') {
+    const placements = window.SurveyPlacements?.[site];
+    const type = legacy.get('type');
+    const placement = placements && Object.hasOwn(placements, type) ? placements[type] : null;
+    const destination = placement ? `${placement.path}${placement.query ? `?${placement.query}` : ''}#${placement.anchor}` : '/';
+    location.replace(destination);
   }
 
   window.Demo = Object.freeze({ show, hide, toast, state, isTyping, initializePlaceholders });

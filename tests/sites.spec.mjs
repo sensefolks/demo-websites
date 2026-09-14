@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 const sites = [
-  { name: 'OrbitDesk', port: 4171, routes: ['/', '/pricing/', '/workspace/', '/help/', '/account/', '/survey-examples/'] },
-  { name: 'Moss & Mug', port: 4172, routes: ['/', '/products/starter-kit/', '/cart/', '/checkout/', '/order/', '/survey-examples/'] },
-  { name: 'Fieldnotes', port: 4173, routes: ['/', '/articles/weekend-guide/', '/search/', '/membership/', '/newsletter/', '/survey-examples/'] },
+  { name: 'OrbitDesk', port: 4171, routes: ['/', '/pricing/', '/workspace/', '/help/', '/account/'] },
+  { name: 'Moss & Mug', port: 4172, routes: ['/', '/products/starter-kit/', '/cart/', '/checkout/', '/order/'] },
+  { name: 'Fieldnotes', port: 4173, routes: ['/', '/articles/weekend-guide/', '/search/', '/membership/', '/newsletter/'] },
 ];
 
 for (const site of sites) {
@@ -27,8 +27,10 @@ for (const site of sites) {
       expect(await page.title()).toContain(site.name);
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
       expect(await page.evaluate(() => window.policyViolations)).toEqual([]);
+      await expect(page.locator('#example-controls, #survey-example, .example-discovery, [href*="survey-examples"], [data-try-cart], [data-sample-order]')).toHaveCount(0);
       for (const placeholder of await page.locator('.survey-placeholder').all()) {
-        await expect(placeholder).toContainText('Placeholder only');
+        await expect(placeholder).toHaveAttribute('data-survey-status', 'unconfigured');
+        await expect(placeholder).toContainText('This feedback form is coming soon.');
         await expect(placeholder.locator('input, textarea, select, form')).toHaveCount(0);
       }
       const brokenVisibleImages = await page.locator('img').evaluateAll((images) => images.filter((image) => {

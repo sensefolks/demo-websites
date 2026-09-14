@@ -131,16 +131,11 @@
     renderCart();
     ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'].forEach(name => document.addEventListener(name, resetInactivity, { passive: true }));
     document.addEventListener('visibilitychange', resetInactivity);
-    document.querySelectorAll('[data-try-cart]').forEach(button => button.addEventListener('click', () => {
-      if (!cart.length) { addToCart('starter-kit'); renderCart(); }
-      window.clearTimeout(inactivityTimer);
-      Demo.show('cart-feedback', { automatic: false, scroll: true });
-    }));
     document.querySelectorAll('[data-dismiss-cart]').forEach(button => button.addEventListener('click', () => {
       cartPromptDismissed = true;
       window.clearTimeout(inactivityTimer);
       Demo.hide('cart-feedback');
-      document.querySelector('[data-try-cart]')?.focus();
+      document.querySelector('#cart-content a[href="/checkout/"]')?.focus();
     }));
     resetInactivity();
   }
@@ -191,17 +186,6 @@
     const total = order.items.reduce((sum, item) => sum + catalog[item.id].price * item.quantity, 0) + (order.delivery === 'express' ? 8 : 0);
     document.getElementById('order-items').innerHTML = `<h2>A few good things, on their way.</h2>${order.items.map(itemPreview).join('')}<div class="summary-row summary-total"><span>Demo total <span class="muted">USD</span></span><span>${money(total)}</span></div>`;
   }
-  function createSampleOrder() {
-    Demo.state.set('moss-order', { id: 'MM-SAMPLE', items: [{ id: 'starter-kit', quantity: 1 }], delivery: 'standard', payment: 'wallet', subtotal: 64, shipping: 0 });
-    renderOrder();
-    document.getElementById('order-content').scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-    document.getElementById('order-title')?.focus();
-  }
-  document.querySelector('[data-sample-order]')?.addEventListener('click', createSampleOrder);
-  document.querySelector('[data-try-order]')?.addEventListener('click', () => {
-    if (document.getElementById('order-content').hidden) createSampleOrder();
-    document.getElementById('checkout-reaction').scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-  });
   updateCount();
   renderOrder();
 })();

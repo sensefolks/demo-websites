@@ -4,20 +4,14 @@
   --placeholder-ink: var(--demo-accent, #33483e);
   box-sizing: border-box;
   padding: clamp(22px, 3vw, 32px);
-  border: 1px dashed color-mix(in srgb, var(--placeholder-ink) 45%, transparent);
+  border: 1px solid var(--demo-line, color-mix(in srgb, var(--placeholder-ink) 30%, transparent));
   border-radius: 10px;
   background: color-mix(in srgb, var(--placeholder-ink) 4%, var(--demo-surface, #fff));
   color: var(--demo-ink, #24302b);
   text-align: left;
   overflow-wrap: anywhere;
 }
-.survey-placeholder .survey-placeholder__label {
-  margin: 0 0 15px;
-  color: var(--placeholder-ink);
-  font: 650 11px/1.5 var(--demo-font, 'DM Sans', 'Inter', sans-serif);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
+
 .survey-placeholder .survey-placeholder__title {
   margin: 0 0 10px;
   color: var(--demo-ink, #24302b);
@@ -30,18 +24,8 @@
   color: var(--demo-muted, #526057);
   font: 400 14px/1.65 var(--demo-font, 'DM Sans', 'Inter', sans-serif);
 }
-.survey-placeholder .survey-placeholder__trigger {
-  margin: 19px 0 0;
-  color: var(--demo-muted, #526057);
-  font: 450 12px/1.6 var(--demo-font, 'DM Sans', 'Inter', sans-serif);
-}
-.survey-placeholder .survey-placeholder__note {
-  margin: 14px 0 0;
-  padding-top: 13px;
-  border-top: 1px solid var(--demo-line, #dce1d9);
-  color: var(--demo-muted, #59645e);
-  font: 400 11px/1.5 var(--demo-font, 'DM Sans', 'Inter', sans-serif);
-}
+
+
 .demo-toast {
   position: fixed;
   z-index: 200;
@@ -56,7 +40,6 @@
   box-shadow: 0 10px 35px #14251b26;
   font: 500 14px/1.5 var(--demo-font, 'DM Sans', 'Inter', sans-serif);
 }
-.survey-placeholder__variants { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; color: var(--demo-accent, #33483e); font: 550 12px/1.6 var(--demo-font, 'DM Sans', 'Inter', sans-serif); text-decoration: underline; text-underline-offset: 4px; }
 .demo-notfound { min-height: 100vh; display: grid; place-items: center; background: var(--demo-page, #f5f3eb); color: var(--demo-ink, inherit); }
 .demo-notfound main { width: min(560px, calc(100% - 48px)); padding: 70px 0; }
 .demo-notfound .demo-wordmark { display: inline-block; margin-bottom: 72px; color: var(--demo-ink, #233a2e); font-size: 24px; text-decoration: none; font-weight: 700; }

@@ -37,6 +37,9 @@
 
   const article = $('[data-article-body]');
   if (article) {
+    if (demo.state.get('guide-feedback-available', false)) {
+      demo.show('article-reaction', {automatic:false, scroll:false});
+    }
     const updateProgress = () => {
       const rect = article.getBoundingClientRect();
       const progress = Math.max(0, Math.min(100, Math.round((window.innerHeight - rect.top) / Math.max(rect.height, 1) * 100)));
@@ -45,13 +48,14 @@
       if (label) label.textContent = progress + '% of the guide explored';
       if (meter) meter.style.width = progress + '%';
       const target = $('#article-reaction');
-      if (progress >= 70 && target && target.hidden) demo.show('article-reaction', {automatic:true, scroll:false});
+      if (progress >= 70 && target && target.hidden && demo.show('article-reaction', {automatic:true, scroll:false})) {
+        demo.state.set('guide-feedback-available', true);
+      }
     };
     window.addEventListener('scroll', updateProgress, {passive:true});
     window.addEventListener('resize', updateProgress);
     window.addEventListener('load', updateProgress, {once:true});
     updateProgress();
-    $('[data-try-reading]')?.addEventListener('click', () => demo.show('article-reaction', {automatic:false, scroll:true}));
   }
 
   const searchForm = $('#search-form');
@@ -107,11 +111,6 @@
       input.value = button.dataset.searchTerm;
       renderResults(input.value);
     }));
-    $('[data-try-search]')?.addEventListener('click', () => {
-      input.value = 'moonwalking';
-      renderResults(input.value);
-      $('#empty-state').scrollIntoView({behavior:'smooth', block:'center'});
-    });
     $('[data-clear-search]')?.addEventListener('click', () => {input.value = ''; renderResults(''); input.focus();});
   }
 
@@ -134,7 +133,6 @@
       $('#membership-preview-message').hidden = false;
       demo.show('membership-dialog', {automatic:false, scroll:false});
     }));
-    $('[data-try-membership]')?.addEventListener('click', () => demo.show('membership-poll', {automatic:false, scroll:true}));
   }
 
   const preferenceForm = $('#preferences-form');
@@ -171,10 +169,6 @@
       demo.toast('Reading preferences saved in this browser.');
     });
     $('[data-unsubscribe]')?.addEventListener('click', unsubscribe);
-    $('[data-try-unsubscribe]')?.addEventListener('click', () => {
-      unsubscribe();
-      $('#unsubscribe-success').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block:'center'});
-    });
     $('[data-resubscribe]')?.addEventListener('click', () => {
       demo.state.set('newsletter-subscribed', true);
       renderSubscription();

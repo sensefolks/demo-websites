@@ -5,7 +5,7 @@ import path from 'node:path';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const check = process.argv.includes('--check');
 for (const site of ['orbitdesk', 'moss-and-mug', 'fieldnotes']) {
-  for (const file of ['demo.js', 'demo.css', 'survey-catalog.js', 'survey-examples.js', 'survey-examples.css']) {
+  for (const file of ['demo.js', 'demo.css', 'survey-placements.js']) {
     const source = await readFile(path.join(root, 'shared', file));
     const target = path.join(root, site, 'assets', file);
     if (check) {

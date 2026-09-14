@@ -8,7 +8,7 @@ test('OrbitDesk: completing a task opens roadmap feedback and preserves progress
   await page.goto(`${orbit}/workspace/`);
   await page.getByRole('button', { name: 'Complete Write a welcome worth reading', exact: true }).click();
   await expect(page.locator('#roadmap-dialog')).toBeVisible();
-  await expect(page.locator('#featurepriority-survey')).toContainText('FeaturePriority');
+  await expect(page.locator('#featurepriority-survey')).toHaveAttribute('data-survey', 'FeaturePriority');
   await page.getByRole('button', { name: 'Close roadmap feedback' }).click();
   await expect(page.locator('[data-column="done"]')).toContainText('Write a welcome worth reading');
   await expect(page.locator('#task-progress-label')).toContainText('3 of 8');
@@ -85,7 +85,7 @@ test('Fieldnotes: unsubscribe completes before optional feedback and can be repl
   await expect(page.locator('#newsletter-feedback')).toBeHidden();
 });
 
-test('Fieldnotes: reading progress reveals Reaction and manual replay bypasses the session prompt limit', async ({ page }) => {
+test('Fieldnotes: earned article feedback remains available on return without moving the reader', async ({ page }) => {
   await page.goto(`${fieldnotes}/articles/weekend-guide/`);
   await expect(page.locator('#article-reaction')).toBeHidden();
   await page.locator('[data-article-body]').evaluate((article) => {
@@ -93,18 +93,11 @@ test('Fieldnotes: reading progress reveals Reaction and manual replay bypasses t
     window.scrollTo(0, window.scrollY + rect.top + rect.height * .8 - window.innerHeight);
   });
   await expect(page.locator('#article-reaction')).toBeVisible();
+  await page.goto(`${fieldnotes}/`);
   await page.goto(`${fieldnotes}/articles/weekend-guide/`);
-  await page.locator('[data-article-body]').evaluate((article) => {
-    const rect = article.getBoundingClientRect();
-    window.scrollTo(0, window.scrollY + rect.top + rect.height * .8 - window.innerHeight);
-  });
-  await expect(page.locator('#article-reaction')).toBeHidden();
-  await page.getByRole('button', { name: 'Try this scenario' }).click();
   await expect(page.locator('#article-reaction')).toBeVisible();
-  await expect(page.locator('#article-reaction')).toBeInViewport();
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.getByRole('button', { name: 'Try this scenario' }).click();
-  await expect(page.locator('#article-reaction')).toBeInViewport();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.evaluate(() => document.activeElement.tagName)).toBe('BODY');
 });
 
 test('Fieldnotes: membership preview opens a dismissible dialog without purchasing', async ({ page }) => {
@@ -162,8 +155,10 @@ test('Moss & Mug: an inactive cart reveals optional FastPoll after 20 seconds', 
   await expect(page.locator('#cart-feedback')).toBeHidden();
   await page.clock.fastForward(21000);
   await expect(page.locator('#cart-feedback')).toBeHidden();
-  await page.locator('[data-try-cart]').click();
-  await expect(page.locator('#cart-feedback')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Continue to checkout' })).toBeVisible();
+  await page.reload();
+  await page.clock.fastForward(21000);
+  await expect(page.locator('#cart-feedback')).toBeHidden();
 });
 
 test('Moss & Mug: removing the last item produces a useful empty state', async ({ page }) => {
