@@ -89,7 +89,7 @@
     const itemCount = document.getElementById('cart-item-count');
     itemCount.textContent = `${count()} ${count() === 1 ? 'good thing' : 'good things'}, ready for a slower morning.`;
     if (!cart.length) {
-      content.innerHTML = `<section class="empty-state"><div class="empty-icon" aria-hidden="true">☕</div><h2>A little room for a ritual.</h2><p>Your bag is taking a breather. Explore a few good things made for your everyday coffee.</p><a class="button" href="/#shop">Find your morning essential <span class="arrow" aria-hidden="true">↗</span></a></section>`;
+      content.innerHTML = `<section class="empty-state"><div class="empty-icon" aria-hidden="true">☕</div><h2>A little room for a ritual.</h2><p>Your bag is taking a breather. Explore a few good things made for your everyday coffee.</p><a class="button" href="/#shop">Find your morning essential</a></section>`;
       document.getElementById('cart-feedback').hidden = true;
       window.clearTimeout(inactivityTimer);
       return;
